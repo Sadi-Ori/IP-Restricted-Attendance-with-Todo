@@ -1,0 +1,87 @@
+/* Attendance Dashboard Styles */
+.o_attendance_dashboard {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.o_attendance_status {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.o_attendance_status_card {
+    flex: 1;
+    padding: 15px;
+    background: white;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin: 0 5px;
+    text-align: center;
+}
+
+.o_attendance_status_card h4 {
+    margin-top: 0;
+    color: #666;
+}
+
+.o_attendance_status_card .value {
+    font-size: 24px;
+    font-weight: bold;
+    color: #007bff;
+}
+
+/* Break and Task Styles */
+.o_break_list, .o_task_list {
+    background: white;
+    padding: 15px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-bottom: 15px;
+}
+
+.o_break_list h4, .o_task_list h4 {
+    margin-top: 0;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+/* Status colors */
+.task-status-draft {
+    color: #6c757d;
+}
+.task-status-in_progress {
+    color: #17a2b8;
+}
+.task-status-done {
+    color: #28a745;
+}
+.task-status-cancel {
+    color: #dc3545;
+}
+
+/* Priority colors */
+.task-priority-low {
+    color: #6c757d;
+}
+.task-priority-medium {
+    color: #17a2b8;
+}
+.task-priority-high {
+    color: #ffc107;
+}
+.task-priority-urgent {
+    color: #dc3545;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .o_attendance_status {
+        flex-direction: column;
+    }
+    .o_attendance_status_card {
+        margin: 5px 0;
+    }
+}

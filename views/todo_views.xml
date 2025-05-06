@@ -1,0 +1,75 @@
+<odoo>
+    <record id="view_task_tree" model="ir.ui.view">
+        <field name="name">attendance.task.tree</field>
+        <field name="model">attendance.task</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="status"/>
+                <field name="priority"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_task_form" model="ir.ui.view">
+        <field name="name">attendance.task.form</field>
+        <field name="model">attendance.task</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_start" string="Start" type="object" class="oe_highlight" states="draft"/>
+                    <button name="action_done" string="Mark Done" type="object" class="oe_highlight" states="in_progress"/>
+                    <button name="action_cancel" string="Cancel" type="object" states="draft,in_progress"/>
+                    <button name="action_reset" string="Reset" type="object" states="done,cancel"/>
+                    <field name="status" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="employee_id"/>
+                            <field name="priority"/>
+                        </group>
+                        <group>
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description">
+                            <field name="description"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_task_search" model="ir.ui.view">
+        <field name="name">attendance.task.search</field>
+        <field name="model">attendance.task</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="employee_id"/>
+                <filter string="In Progress" name="in_progress" domain="[('status','=','in_progress')]"/>
+                <filter string="Done" name="done" domain="[('status','=','done')]"/>
+                <filter string="High Priority" name="high_priority" domain="[('priority','=','high')]"/>
+            </search>
+        </field>
+    </record>
+
+    <menuitem id="menu_task_root" name="Tasks" sequence="10"/>
+    <menuitem id="menu_task_config" name="Tasks" parent="menu_task_root"/>
+    <menuitem id="menu_task_all" name="All Tasks" parent="menu_task_config" action="action_task"/>
+
+    <record id="action_task" model="ir.actions.act_window">
+        <field name="name">Tasks</field>
+        <field name="res_model">attendance.task</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_task_search"/>
+    </record>
+</odoo>

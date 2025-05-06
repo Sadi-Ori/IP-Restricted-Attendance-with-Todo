@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Assets injection -->
+    <template id="assets_backend" inherit_id="web.assets_backend">
+        <xpath expr="." position="inside">
+            <link rel="stylesheet" href="/ip_restricted_attendance/static/src/css/attendance.css"/>
+            <script src="/ip_restricted_attendance/static/src/js/attendance_dashboard.js"></script>
+        </xpath>
+    </template>
+
+    <!-- Dashboard Templates -->
+    <template id="attendance_dashboard">
+        <t t-call="web.layout">
+            <t t-set="head">
+                <title>Employee Attendance Dashboard</title>
+            </t>
+            <div class="o_attendance_dashboard">
+                <!-- Header Section -->
+                <div class="dashboard-header">
+                    <h2>Welcome <t t-esc="employee.name"/></h2>
+                    <div class="ip-info">
+                        Logged in from: <span t-esc="request.httprequest.remote_addr"/>
+                    </div>
+                </div>
+
+                <!-- Status Cards -->
+                <div class="row status-cards">
+                    <div class="col-md-4">
+                        <div class="card card-status" t-att-class="employee.attendance_state == 'checked_in' ? 'card-success' : 'card-default'">
+                            <div class="card-body">
+                                <h5 class="card-title">Attendance Status</h5>
+                                <p class="card-text">
+                                    <t t-if="employee.attendance_state == 'checked_in'">
+                                        Currently Checked In
+                                    </t>
+                                    <t t-else="">
+                                        Currently Checked Out
+                                    </t>
+                                </p>
+                                <div class="btn-group">
+                                    <button t-if="employee.attendance_state != 'checked_in'" 
+                                            class="btn btn-success btn-checkin">
+                                        Check In
+                                    </button>
+                                    <button t-if="employee.attendance_state == 'checked_in'" 
+                                            class="btn btn-danger btn-checkout">
+                                        Check Out
+                                    </button>
+                                    <button t-if="employee.attendance_state == 'checked_in'" 
+                                            class="btn btn-warning btn-break">
+                                        Take Break
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card card-today">
+                            <div class="card-body">
+                                <h5 class="card-title">Today's Summary</h5>
+                                <p class="card-text">
+                                    Worked: <span t-esc="employee.today_hours"/> hours<br/>
+                                    Breaks: <span t-esc="employee.today_breaks"/> times
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card card-tasks">
+                            <div class="card-body">
+                                <h5 class="card-title">Tasks Status</h5>
+                                <p class="card-text">
+                                    Completed: <span t-esc="employee.current_attendance_id.completed_task_count or 0"/><br/>
+                                    Pending: <span t-esc="employee.current_attendance_id.pending_task_count or 0"/>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Content -->
+                <div class="row dashboard-content">
+                    <!-- Attendance Section -->
+                    <div class="col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4>Today's Attendance</h4>
+                            </div>
+                            <div class="panel-body">
+                                <div t-if="employee.current_attendance_id" class="current-attendance">
+                                    <p>
+                                        Checked in at: <span t-esc="employee.current_attendance_id.check_in"/><br/>
+                                        <t t-if="employee.current_attendance_id.check_out">
+                                            Checked out at: <span t-esc="employee.current_attendance_id.check_out"/>
+                                        </t>
+                                    </p>
+                                    
+                                    <div t-if="employee.current_attendance_id.break_ids" class="breaks-section">
+                                        <h5>Breaks Taken:</h5>
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Start Time</th>
+                                                    <th>End Time</th>
+                                                    <th>Duration</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <t t-foreach="employee.current_attendance_id.break_ids" t-as="break">
+                                                    <tr>
+                                                        <td t-esc="break.start_time"/>
+                                                        <td t-esc="break.end_time or 'In Progress'"/>
+                                                        <td t-esc="break.duration or '0.0'"/> hrs
+                                                    </tr>
+                                                </t>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div t-else="" class="no-attendance">
+                                    <p>No active attendance record found.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Todo Section -->
+                    <div class="col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4>Today's Tasks</h4>
+                                <button class="btn btn-xs btn-primary pull-right btn-add-task">
+                                    <i class="fa fa-plus"/> Add Task
+                                </button>
+                            </div>
+                            <div class="panel-body">
+                                <div class="task-form" style="display: none;">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control new-task-name" placeholder="Task name"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <textarea class="form-control new-task-description" placeholder="Description"></textarea>
+                                    </div>
+                                    <button class="btn btn-sm btn-success btn-save-task">Save Task</button>
+                                    <button class="btn btn-sm btn-default btn-cancel-task">Cancel</button>
+                                </div>
+                                
+                                <div class="task-list">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Task</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="employee.current_attendance_id.task_ids" t-as="task">
+                                                <tr class="task-row" t-att-data-task-id="task.id">
+                                                    <td>
+                                                        <strong t-esc="task.name"/>
+                                                        <t t-if="task.description">
+                                                            <br/><small t-esc="task.description"/>
+                                                        </t>
+                                                    </td>
+                                                    <td>
+                                                        <span t-if="task.is_completed" class="label label-success">Completed</span>
+                                                        <span t-if="not task.is_completed" class="label label-warning">Pending</span>
+                                                    </td>
+                                                    <td>
+                                                        <input type="checkbox" t-att-checked="task.is_completed" class="task-complete"/>
+                                                        <button class="btn btn-xs btn-danger btn-delete-task">
+                                                            <i class="fa fa-trash"/>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                            <t t-if="not employee.current_attendance_id.task_ids">
+                                                <tr>
+                                                    <td colspan="3" class="text-center">No tasks for today</td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- QWeb Templates for Dynamic Updates -->
+    <template id="task_item">
+        <t t-name="ip_restricted_attendance.task_item">
+            <tr class="task-row" t-att-data-task-id="task.id">
+                <td>
+                    <strong t-esc="task.name"/>
+                    <t t-if="task.description">
+                        <br/><small t-esc="task.description"/>
+                    </t>
+                </td>
+                <td>
+                    <span t-if="task.is_completed" class="label label-success">Completed</span>
+                    <span t-if="not task.is_completed" class="label label-warning">Pending</span>
+                </td>
+                <td>
+                    <input type="checkbox" t-att-checked="task.is_completed" class="task-complete"/>
+                    <button class="btn btn-xs btn-danger btn-delete-task">
+                        <i class="fa fa-trash"/>
+                    </button>
+                </td>
+            </tr>
+        </t>
+    </template>
+
+    <template id="break_item">
+        <t t-name="ip_restricted_attendance.break_item">
+            <tr>
+                <td t-esc="break.start_time"/>
+                <td t-esc="break.end_time or 'In Progress'"/>
+                <td t-esc="break.duration or '0.0'"/> hrs
+            </tr>
+        </t>
+    </template>
+
+    <!-- Notification Templates -->
+    <template id="notification_checkin">
+        <t t-name="ip_restricted_attendance.notification_checkin">
+            <div class="alert alert-success">
+                Successfully checked in at <t t-esc="datetime.datetime.now().strftime('%H:%M:%S')"/>
+            </div>
+        </t>
+    </template>
+
+    <template id="notification_checkout">
+        <t t-name="ip_restricted_attendance.notification_checkout">
+            <div class="alert alert-info">
+                Successfully checked out at <t t-esc="datetime.datetime.now().strftime('%H:%M:%S')"/>
+            </div>
+        </t>
+    </template>
+</odoo>

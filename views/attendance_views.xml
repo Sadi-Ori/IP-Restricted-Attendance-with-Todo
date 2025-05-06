@@ -1,0 +1,24 @@
+<odoo>
+    <record id="view_attendance_form_inherit" model="ir.ui.view">
+        <field name="name">hr.attendance.form.inherit</field>
+        <field name="model">hr.attendance</field>
+        <field name="inherit_id" ref="hr_attendance.hr_attendance_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='employee_id']" position="after">
+                <field name="device_id" readonly="1"/>
+                <field name="check_out_device_id" readonly="1"/>
+                <field name="total_break_duration" readonly="1"/>
+            </xpath>
+            <xpath expr="//field[@name='check_out']" position="after">
+                <field name="break_ids">
+                    <tree>
+                        <field name="name"/>
+                        <field name="start_time"/>
+                        <field name="end_time"/>
+                        <field name="duration"/>
+                    </tree>
+                </field>
+            </xpath>
+        </field>
+    </record>
+</odoo>

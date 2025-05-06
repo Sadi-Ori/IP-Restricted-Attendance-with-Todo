@@ -1,0 +1,12 @@
+<odoo>
+    <menuitem id="menu_attendance_root" name="Attendance" sequence="5"/>
+
+    <menuitem id="menu_attendance_config" name="Configuration" parent="menu_attendance_root"/>
+    <menuitem id="menu_attendance_devices" name="Devices" parent="menu_attendance_config" action="action_attendance_devices"/>
+
+    <record id="action_attendance_devices" model="ir.actions.act_window">
+        <field name="name">Attendance Devices</field>
+        <field name="res_model">attendance.device</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

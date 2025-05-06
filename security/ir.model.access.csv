@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_attendance_device,attendance.device,model_attendance_device,base.group_user,1,1,1,0
+access_attendance_task,attendance.task,model_attendance_task,base.group_user,1,1,1,1
+access_attendance_break,attendance.break,model_attendance_break,base.group_user,1,1,1,1
